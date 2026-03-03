@@ -9,3 +9,4 @@ alembic
 uvicorn
 passlib
 python-multipart
+argon2_cffi

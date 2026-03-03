@@ -19,7 +19,7 @@ async def register_new_user(
     session: AsyncSession = Depends(get_session)
 ):
     user_service = UserService(session=session)
-    return user_service.add_new_user(user=user)
+    return await user_service.add_new_user(user=user)
 
 
 @user_router.post("/login", status_code=status.HTTP_200_OK)
@@ -28,4 +28,4 @@ async def login_user(
     session: AsyncSession = Depends(get_session)
 ):
     user_service = UserService(session=session)
-    return user_service.auth_user(credents=user)
+    return await user_service.auth_user(credents=user)

@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.app.database.db import AsyncSession
 from src.app.database.models import User
 from src.app.api.schemas.user import UserCreate
+from src.app.api.schemas.role import RoleOut
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.role_repository import RoleRepository
 from src.app.security.security_context import hash_password, check_hashes
@@ -15,15 +16,18 @@ class UserService:
         self.session = session
 
     async def add_new_user(self, user: UserCreate):
-        existing_user = UserRepository(session=self.session).add_user(data=user)
+        user_repo = UserRepository(session=self.session)
+        existing_user = await user_repo.add_user(data=user)
 
         if existing_user:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_409_CONFLICT,
                 detail="User already exists."
             )
         
-        role = RoleRepository(session=self.session).get_role()
+        role_repo = RoleRepository(session=self.session)
+        role = await role_repo.get_role()
+
 
         if not role:
             raise HTTPException(
@@ -36,8 +40,9 @@ class UserService:
             password = hash_password(user.password)
         )
 
-        await self.session.add(new_user)
         new_user.roles.append(role)
+
+        self.session.add(new_user)
         await self.session.commit()
 
         return {"detail": "Succesfully registered."}
@@ -47,7 +52,8 @@ class UserService:
             self,
             credents: OAuth2PasswordRequestForm
     ):
-        user = UserRepository(session=self.session).add_user(data=credents)
+        user_repo = UserRepository(session=self.session)
+        user = await user_repo.get_user_by_username(username=credents.username)
         
         if not user:
             raise HTTPException(
