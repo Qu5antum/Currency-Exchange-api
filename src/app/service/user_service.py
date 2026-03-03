@@ -6,6 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.app.database.db import AsyncSession
 from src.app.database.models import User, Role
 from src.app.api.schemas.user import UserCreate
+from src.app.repositories.user_repository import UserRepository
+from src.app.repositories.role_repository import RoleRepository
 from src.app.security.security_context import hash_password, check_hashes
 from src.app.security.security import create_jwt_token
 
@@ -15,10 +17,7 @@ class UserService:
         self.session = session
 
     async def add_new_user(self, user: UserCreate):
-        result = await self.session.execute(
-            select(User).where(User.username == user.username)
-        )
-        existing_user = result.scalar_one_or_none()
+        existing_user = UserRepository(session=self.session).add_user(data=user)
 
         if existing_user:
             raise HTTPException(
@@ -26,10 +25,7 @@ class UserService:
                 detail="User already exists."
             )
         
-        result = await self.session.execute(
-            select(Role).where(Role.name == "USER")
-        )
-        role = result.scalar_one_or_none()
+        role = RoleRepository(session=self.session).get_role()
 
         if not role:
             raise HTTPException(
@@ -55,11 +51,7 @@ class UserService:
             self,
             credents: OAuth2PasswordRequestForm
     ):
-        result = await self.session.execute(
-            select(User).where(User.username == credents.username)
-        )
-
-        user = result.scalar_one_or_none()
+        user = UserRepository(session=self.session).add_user(data=credents)
         
         if not user:
             raise HTTPException(
