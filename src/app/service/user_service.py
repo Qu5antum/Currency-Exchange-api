@@ -1,10 +1,8 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.app.database.db import AsyncSession
-from src.app.database.models import User, Role
+from src.app.database.models import User
 from src.app.api.schemas.user import UserCreate
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.role_repository import RoleRepository
@@ -39,9 +37,7 @@ class UserService:
         )
 
         await self.session.add(new_user)
-
         new_user.roles.append(role)
-
         await self.session.commit()
 
         return {"detail": "Succesfully registered."}
