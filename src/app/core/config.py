@@ -11,11 +11,11 @@ class Config(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    APP_NAME = "Currecy Exchange"
+    APP_NAME: str = "Currecy Exchange"
     debug: bool = True
     cors_origins: list[str] = ["*"]
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file="src/.env")
 
     @property
     def URL_DATABASE(self) -> str:

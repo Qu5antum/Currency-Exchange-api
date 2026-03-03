@@ -2,6 +2,10 @@ sqlalchemy
 fastapi 
 pydantic
 pydantic_settings
+pydantic[email]
 asyncpg
 Pyjwt
 alembic
+uvicorn
+passlib
+python-multipart
