@@ -1,0 +1,31 @@
+from fastapi import Depends
+from typing import List, Dict, Any
+import httpx
+
+
+class CMCService:
+    def __init__(self, client: httpx.AsyncClient):
+        self.client = client
+
+    async def get_crypto_listing(self, limit: int = 20) -> List[Dict[str, Any]]:
+        response = await self.client.get("/v1/cryptocurrency/listings/latest", params={"limit": limit, "convert": "USD"})
+        response.raise_for_status()
+        result = response.json()
+
+        if result["status"]["error_code"] != 0:
+            raise RuntimeError(result["status"]["error_message"])
+
+        return result["data"]
+    
+    async def get_crypto_by_id(self, crypto_currency_id: int):
+        responce = await self.client.get("/v2/cryptocurrency/quotes/latest", params={"id": crypto_currency_id, "convert": "USD"})
+        responce.raise_for_status()
+        result = responce.json()
+
+        if result["status"]["error_code"] != 0:
+            raise RuntimeError(result["status"]["error_message"])
+
+        return result["data"][str(crypto_currency_id)]
+    
+    
+

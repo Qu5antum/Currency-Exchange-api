@@ -11,6 +11,8 @@ class Config(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
+    CMC_API_KEY: str
+
     APP_NAME: str = "Currecy Exchange"
     debug: bool = True
     cors_origins: list[str] = ["*"]

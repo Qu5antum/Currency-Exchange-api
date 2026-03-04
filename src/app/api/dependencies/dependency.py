@@ -1,6 +1,7 @@
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, status, HTTPException, Request
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+import httpx
 
 from src.app.database.models import User
 from src.app.database.db import AsyncSession, get_session
@@ -24,5 +25,8 @@ async def get_current_user(
         )
     
     return user
+
+def get_http_client(request: Request) -> httpx.AsyncClient:
+    return request.app.state.http_client
 
 

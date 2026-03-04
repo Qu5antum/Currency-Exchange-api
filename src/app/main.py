@@ -1,17 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn, asyncio
+import uvicorn, asyncio, httpx
 
 from src.app.database.db import init_models
 from src.app.core.config import settings
 from src.app.api.endpoints.user_endpoint import user_router
+from src.app.api.endpoints.crpyto_currency_endpoint import crypto_router
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.http_client = httpx.AsyncClient(
+        base_url="https://pro-api.coinmarketcap.com",
+        headers={
+            "X-CMC_PRO_API_KEY": settings.CMC_API_KEY
+        },
+        timeout=10.0
+    )
+
+    yield 
+
+    await app.state.http_client.aclose()
 
 app = FastAPI(
+    lifespan=lifespan,
     title = settings.APP_NAME,
     debug=settings.debug,
     docs_url="/docs"
 )
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +38,7 @@ app.add_middleware(
 )
 
 app.include_router(user_router)
+app.include_router(crypto_router)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.app.database.db import AsyncSession
 from src.app.database.models import User
 from src.app.api.schemas.user import UserCreate
-from src.app.api.schemas.role import RoleOut
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.role_repository import RoleRepository
 from src.app.security.security_context import hash_password, check_hashes
