@@ -2,9 +2,7 @@ from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.app.database.db import AsyncSession, get_session
-from src.app.database.models import User
-from src.app.api.schemas.user import UserCreate, UserOut
-from src.app.api.dependencies.dependency import get_current_user
+from src.app.api.schemas.user import UserCreate
 from src.app.service.user_service import UserService
 
 
