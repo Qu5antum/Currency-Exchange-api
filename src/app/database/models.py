@@ -44,8 +44,8 @@ user_roles = Table(
 )
 
 
-class Currency(Base):
-    __tablename__ = "currencies"
+class CryptoCurrency(Base):
+    __tablename__ = "crypto_currencies"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cmc_id: Mapped[int] = mapped_column(Integer, unique=True, index=True)
@@ -56,7 +56,7 @@ class Currency(Base):
     total_supply: Mapped[float] = mapped_column(Float)
     cmc_rank: Mapped[int] = mapped_column(Integer)
 
-    snapshots: Mapped[list["MarketSnapshot"]] = relationship(back_populates="currency", cascade="all, delete-orphan")
+    snapshots: Mapped[list["MarketSnapshot"]] = relationship(back_populates="crypto_currency", cascade="all, delete-orphan")
 
 
 class MarketSnapshot(Base):
@@ -72,8 +72,8 @@ class MarketSnapshot(Base):
     fully_diluted_market_cap: Mapped[float] = mapped_column(Float)
     timestamp: Mapped[datetime.datetime] = mapped_column(DateTime, default=lambda: datetime.datetime.now(datetime.UTC), index=True)
 
-    currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("currencies.id"), index=True, nullable=False)
-    currency: Mapped["Currency"] = relationship(back_populates="snapshot")
+    currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("crypto_currencies.id"), index=True, nullable=False)
+    crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="snapshots")
 
 
 

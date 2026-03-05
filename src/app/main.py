@@ -5,7 +5,7 @@ import uvicorn, asyncio, httpx
 from src.app.database.db import init_models
 from src.app.core.config import settings
 from src.app.api.endpoints.user_endpoint import user_router
-from src.app.api.endpoints.crpyto_currency_endpoint import crypto_router
+from src.app.api.endpoints.crypto_currency import crypto_router
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
