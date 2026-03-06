@@ -18,14 +18,6 @@ class AbstractUserRepository(ABC):
 class UserRepository(AbstractUserRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
-
-    async def add_user(self, data: UserCreate) -> User:
-        result = await self.session.execute(
-            select(User).where(User.username == data.username)
-        )
-        user = result.scalar_one_or_none()
-
-        return user
     
     async def get_user_by_username(self, username: str) -> User | None:
         result = await self.session.execute(

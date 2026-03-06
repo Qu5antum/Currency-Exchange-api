@@ -16,7 +16,7 @@ class UserService:
 
     async def add_new_user(self, user: UserCreate):
         user_repo = UserRepository(session=self.session)
-        existing_user = await user_repo.add_user(data=user)
+        existing_user = await user_repo.get_user_by_username(username=user.username)
 
         if existing_user:
             raise HTTPException(
