@@ -7,10 +7,6 @@ from src.app.api.schemas.user import UserCreate, UserOut
 
 class AbstractUserRepository(ABC):
     @abstractmethod
-    async def add_user(self, data: UserCreate):
-        raise NotImplementedError
-    
-    @abstractmethod
     async def get_user_by_username(self, data: str): 
         raise NotImplementedError
     

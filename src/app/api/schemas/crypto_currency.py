@@ -47,7 +47,6 @@ class CryptoCurrencyCreate(CryptoCurrencyBase):
 
 class CryptoCurrencyAPIOut(CryptoCurrencyBase):
     id: int
-    cmc_id: int
     quote: Quote
 
 

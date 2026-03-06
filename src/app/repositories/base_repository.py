@@ -16,6 +16,10 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def get_by_id(self, model_id: int):
         raise NotImplementedError
+    
+    @abstractmethod
+    async def get_by_id_custom_id(self, custom_id: int):
+        raise NotImplementedError
 
 
 class Repository(AbstractRepository):
@@ -36,4 +40,11 @@ class Repository(AbstractRepository):
     async def get_by_id(self, model_id: int):
         result = await self.session.get(self.model, model_id)
         return result 
+    
+    async def get_by_custom_id(self, custom_id: int):
+        result = await self.session.execute(
+            select(self.model).where(self.model.cmc_id == custom_id)
+        )
+        existing_object = result.scalar_one_or_none()
+        return existing_object
     
