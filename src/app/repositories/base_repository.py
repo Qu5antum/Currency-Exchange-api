@@ -20,6 +20,10 @@ class AbstractRepository(ABC):
     @abstractmethod
     async def get_by_id_custom_id(self, custom_id: int):
         raise NotImplementedError
+    
+    @abstractmethod
+    async def update_data(self, obj_id: int, data: dict):
+        raise NotImplementedError
 
 
 class Repository(AbstractRepository):
@@ -47,4 +51,23 @@ class Repository(AbstractRepository):
         )
         existing_object = result.scalar_one_or_none()
         return existing_object
+    
+    async def update_data(self, obj_id: int, data: dict):
+        result = await self.session.execute(
+            select(self.model).where(self.model.id == obj_id)
+        )
+        obj = result.scalar_one_or_none()
+
+        if obj is None:
+            return None
+
+        for field, value in data.items():
+            setattr(obj, field, value)
+
+        await self.session.commit()
+        await self.session.refresh(obj)
+
+        return obj
+        
+        
     
