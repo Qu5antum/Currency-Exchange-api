@@ -70,7 +70,11 @@ class MarketSnapshot(Base):
     market_cap: Mapped[float] = mapped_column(Float)
     market_cap_dominance: Mapped[float] = mapped_column(Float)
     fully_diluted_market_cap: Mapped[float] = mapped_column(Float)
-    timestamp: Mapped[datetime.datetime] = mapped_column(DateTime, default=lambda: datetime.datetime.now(datetime.UTC), index=True)
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.datetime.now(datetime.UTC),
+        index=True
+    )
 
     currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("crypto_currencies.id"), index=True, nullable=False)
     crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="snapshots")

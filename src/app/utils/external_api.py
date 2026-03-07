@@ -2,6 +2,10 @@ from fastapi import Depends
 from typing import List, Dict, Any
 import httpx
 
+from src.app.api.dependencies.dependency import get_http_client
+
+def get_cmc_service(client: httpx.AsyncClient = Depends(get_http_client)):
+    return CMCServiceApi(client)
 
 class CMCServiceApi:
     def __init__(self, client: httpx.AsyncClient):

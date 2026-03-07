@@ -18,7 +18,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    async def get_by_id_custom_id(self, custom_id: int):
+    async def get_by_custom_id(self, custom_id: int):
         raise NotImplementedError
     
     @abstractmethod
