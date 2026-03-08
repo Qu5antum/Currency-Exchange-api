@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -57,21 +57,18 @@ class Repository(AbstractRepository):
         return existing_object
     
     async def update_data(self, obj_id: int, data: dict):
-        result = await self.session.execute(
-            select(self.model).where(self.model.id == obj_id)
+        stmt = (
+            update(self.model)
+            .where(self.model.id == obj_id)
+            .values(**data)
+            .returning(self.model)
         )
-        obj = result.scalar_one_or_none()
 
-        if obj is None:
-            return None
-
-        for field, value in data.items():
-            setattr(obj, field, value)
+        result = await self.session.execute(stmt)
 
         await self.session.commit()
-        await self.session.refresh(obj)
 
-        return obj
+        return result.scalar_one_or_none()
     
     async def find_all_with_custom_ids(self, obj_ids: list[int]):
         result = await self.session.execute(

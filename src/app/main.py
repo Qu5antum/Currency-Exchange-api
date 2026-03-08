@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn, asyncio, httpx
+from contextlib import asynccontextmanager
 
 from src.app.database.db import init_models
 from src.app.core.config import settings
 from src.app.api.endpoints.user_endpoint import user_router
 from src.app.api.endpoints.crypto_currency import crypto_router
-from contextlib import asynccontextmanager
+from src.app.scheduler.market_scheduler import start_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,6 +19,8 @@ async def lifespan(app: FastAPI):
         timeout=10.0
     )
 
+    start_scheduler()
+
     yield 
 
     await app.state.http_client.aclose()
@@ -28,6 +31,7 @@ app = FastAPI(
     debug=settings.debug,
     docs_url="/docs"
 )
+
 
 app.add_middleware(
     CORSMiddleware,

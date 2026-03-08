@@ -11,3 +11,4 @@ passlib
 python-multipart
 argon2_cffi
 httpx
+apscheduler
