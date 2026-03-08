@@ -19,8 +19,6 @@ async def lifespan(app: FastAPI):
         timeout=10.0
     )
 
-    start_scheduler()
-
     yield 
 
     await app.state.http_client.aclose()

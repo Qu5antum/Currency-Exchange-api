@@ -4,7 +4,7 @@ import httpx
 
 from src.app.api.dependencies.dependency import get_http_client
 
-def get_cmc_service(client: httpx.AsyncClient = Depends(get_http_client)):
+def get_cmc_api_service(client: httpx.AsyncClient = Depends(get_http_client)):
     return CMCServiceApi(client)
 
 class CMCServiceApi:
@@ -22,7 +22,7 @@ class CMCServiceApi:
         return result["data"]
     
     async def get_crypto_by_id(self, crypto_currency_id: int):
-        responce = await self.client.get("/v2/cryptocurrency/quotes/latest", params={"id": crypto_currency_id, "convert": "USD"})
+        responce = await self.client.get("/v2/cryptocurrency/quotes/latest", params={"id": crypto_currency_id})
         responce.raise_for_status()
         result = responce.json()
 
