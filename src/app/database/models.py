@@ -45,7 +45,7 @@ user_roles = Table(
 
 
 class CryptoCurrency(Base):
-    __tablename__ = "crypto_currencies"
+    __tablename__ = "crypto_currencies" 
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cmc_id: Mapped[int] = mapped_column(Integer, unique=True, index=True)

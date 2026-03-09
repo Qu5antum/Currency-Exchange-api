@@ -12,7 +12,7 @@ class CMCServiceApi:
         self.client = client
 
     async def get_crypto_listing(self, limit: int = 5) -> List[Dict[str, Any]]:
-        response = await self.client.get("/v1/cryptocurrency/listings/latest", params={"limit": limit, "convert": "USD"})
+        response = await self.client.get("/v1/cryptocurrency/listings/latest", params={"limit": limit})
         response.raise_for_status()
         result = response.json()
 
