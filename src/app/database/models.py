@@ -49,7 +49,7 @@ class CryptoCurrency(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     cmc_id: Mapped[int] = mapped_column(Integer, unique=True, index=True)
-    name: Mapped[str] = mapped_column(String, unique=True)
+    name: Mapped[str] = mapped_column(String)
     symbol: Mapped[str] = mapped_column(String, index=True)
     max_supply: Mapped[float | None] = mapped_column(Float, nullable=True)
     circulating_supply: Mapped[float] = mapped_column(Float)

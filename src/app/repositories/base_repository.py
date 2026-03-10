@@ -25,9 +25,6 @@ class AbstractRepository(ABC):
     async def update_data(self, obj_id: int, data: dict):
         raise NotImplementedError
     
-    @abstractmethod
-    async def find_all_with_custom_ids(self, obj_ids: list[int]):
-        raise NotImplementedError
 
 
 class Repository(AbstractRepository):
@@ -70,12 +67,6 @@ class Repository(AbstractRepository):
 
         return result.scalar_one_or_none()
     
-    async def find_all_with_custom_ids(self, obj_ids: list[int]):
-        result = await self.session.execute(
-            select(self.model).where(self.model.id.in_(obj_ids))
-        )
-        objects = result.scalars().all()
-        return objects
 
 
         

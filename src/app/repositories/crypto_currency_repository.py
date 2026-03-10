@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+from sqlalchemy.dialects.postgresql import insert
 import datetime
 
 from src.app.database.db import AsyncSession
@@ -10,10 +11,16 @@ from src.app.database.models import CryptoCurrency, MarketSnapshot
 class BaseCryptoCurrencyRepository(Repository):
     model = CryptoCurrency
 
+    async def find_with_cmc_ids(self, cmc_ids: list[int]):
+        result = await self.session.execute(
+            select(self.model).where(self.model.cmc_id.in_(cmc_ids))
+        )
+        return result.scalars().all()
+
     async def find_all_with_relation(self):
         result = await self.session.execute(
-            select(CryptoCurrency)
-            .options(selectinload(CryptoCurrency.snapshots))
+            select(self.model)
+            .options(selectinload(self.model.snapshots))
         )
         crypto_currencies_with_snapshots = result.scalars().all()
 
@@ -21,9 +28,9 @@ class BaseCryptoCurrencyRepository(Repository):
     
     async def find_with_symbol(self, symbol: str, days: int | None = None) -> None:
         result = await self.session.execute(
-            select(CryptoCurrency)
-            .where(CryptoCurrency.symbol == symbol)
-            .options(selectinload(CryptoCurrency.snapshots))
+            select(self.model)
+            .where(self.model.symbol == symbol)
+            .options(selectinload(self.model.snapshots))
         )
         crypto_currency_with_snapshots = result.scalar_one_or_none()
 
@@ -45,6 +52,3 @@ class BaseCryptoCurrencyRepository(Repository):
             )
 
         return result.scalars().all()
-    
-
-

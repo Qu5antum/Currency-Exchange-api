@@ -11,7 +11,7 @@ async def sync_market():
     async with async_session() as session:
         cmc_api_service = CMCServiceApi(get_cmc_api_service)
         service = MarketSyncService(session=session,cmc_api_service=cmc_api_service)
-        await service.sync_crypto_currencies(limit=5)
+        await service.sync_market_snapshots(limit=5)
 
 def start_scheduler():
 

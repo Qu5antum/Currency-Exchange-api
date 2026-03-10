@@ -27,13 +27,15 @@ async def get_crypto_by_id(
 ):
     return await cmc_api_service.get_crypto_by_id(crypto_currency_id=crypto_currency_id)
 
-@crypto_router.post("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
-async def insert_crypto_in_db(
+@crypto_router.post("/{limit}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
+async def add_crypto_currencies(
+    limit: int = 5,
     cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)
 ):
-    market_sync_service = MarketSyncService(session=session, cmc_api_service=cmc_api_service)
-    return await market_sync_service.sync_crypto_currencies()
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
+    return await crypto_currency_service.add_crypto_currencies_in_db(limit=limit)
+    
 
 @crypto_router.get("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_crypto_currencies(
@@ -58,3 +60,12 @@ async def get_currency_history(
 ):
     crypto_currency_service = CryptoCurrencyService(session=session)
     return await crypto_currency_service.get_all_crypto_currencies(symbol=symbol, days=days)
+
+@crypto_router.post("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
+async def update_market_snapshots(
+    limit: int = 5,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
+    session: AsyncSession = Depends(get_session)
+):
+    market_sync_service = MarketSyncService(session=session, cmc_api_service=cmc_api_service)
+    return await market_sync_service.sync_market_snapshots(limit=limit)
