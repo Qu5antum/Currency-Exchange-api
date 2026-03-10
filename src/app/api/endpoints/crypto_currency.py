@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, status
-import httpx
 
 from src.app.database.db import AsyncSession, get_session
 from src.app.api.dependencies.dependency import get_http_client
@@ -39,27 +38,48 @@ async def add_crypto_currencies(
 
 @crypto_router.get("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_crypto_currencies(
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)
 ):
-    crypto_currency_service = CryptoCurrencyService(session=session)
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.get_all_crypto_currencies()
 
 @crypto_router.get("/{symbol}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_crypto_currencies(
     symbol: str,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)
 ):
-    crypto_currency_service = CryptoCurrencyService(session=session)
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.get_all_crypto_currencies(symbol=symbol)   
 
 @crypto_router.get("/{symbol}/history/{period}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_currency_history(
     days: int,
     symbol: str,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)
 ):
-    crypto_currency_service = CryptoCurrencyService(session=session)
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.get_all_crypto_currencies(symbol=symbol, days=days)
+
+@crypto_router.get("/top_gainers/{limit}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def get_top_gainers(
+    limit: int = 10,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
+    session: AsyncSession = Depends(get_session)
+):
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
+    return await crypto_currency_service.get_top_gainers(limit=limit)
+
+@crypto_router.get("/top_losers/{limit}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def get_top_gainers(
+    limit: int = 10,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
+    session: AsyncSession = Depends(get_session)
+):
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
+    return await crypto_currency_service.get_top_losers(limit=limit)
 
 @crypto_router.post("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
 async def update_market_snapshots(

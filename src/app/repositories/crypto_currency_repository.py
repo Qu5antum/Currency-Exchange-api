@@ -1,6 +1,5 @@
-from sqlalchemy import select
+from sqlalchemy import select, asc, desc
 from sqlalchemy.orm import selectinload
-from sqlalchemy.dialects.postgresql import insert
 import datetime
 
 from src.app.database.db import AsyncSession
@@ -52,3 +51,27 @@ class BaseCryptoCurrencyRepository(Repository):
             )
 
         return result.scalars().all()
+    
+    async def get_top_gainers(self, limit: int = 10):
+        result  = await self.session.execute(
+            select(self.model, MarketSnapshot)
+            .join(MarketSnapshot)
+            .options(selectinload(self.model.snapshots))
+            .order_by(asc(MarketSnapshot.percent_change_24h))
+            .limit(limit)
+        )
+
+        return result.scalars().all()
+    
+    async def get_top_losers(self, limit: int = 10):
+        result  = await self.session.execute(
+            select(self.model, MarketSnapshot)
+            .join(MarketSnapshot)
+            .options(selectinload(self.model.snapshots))
+            .order_by(desc(MarketSnapshot.percent_change_24h))
+            .limit(limit)
+        )
+
+        return result.scalars().all()
+
+

@@ -76,3 +76,13 @@ class CryptoCurrencyService:
                         detail="Crypto currency with this symbol not found."
                     )
                 return market_snapshots
+            
+    async def get_top_gainers(self, limit: int = 10):
+        top_gainers_crypto_currencies = await self.crypto_currency_repo.get_top_gainers(limit=limit)
+
+        return top_gainers_crypto_currencies
+    
+    async def get_top_losers(self, limit: int = 10):
+        top_losers_crypto_currencies = await self.crypto_currency_repo.get_top_losers(limit=limit)
+
+        return top_losers_crypto_currencies
