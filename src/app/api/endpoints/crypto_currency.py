@@ -81,6 +81,24 @@ async def get_top_gainers(
     crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.get_top_losers(limit=limit)
 
+@crypto_router.get("/search/{name}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def search_crypto_currency_by_name(
+    name: str,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
+    session: AsyncSession = Depends(get_session)
+):
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
+    return await crypto_currency_service.search_crypto_currency_by_name(name=name)
+
+@crypto_router.get("/search/{symbol}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def search_crypto_currency_by_symbol(
+    symbol: str,
+    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
+    session: AsyncSession = Depends(get_session)
+):
+    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
+    return await crypto_currency_service.search_crypto_currency_by_symbol(symbol=symbol)
+
 @crypto_router.post("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
 async def update_market_snapshots(
     limit: int = 5,
