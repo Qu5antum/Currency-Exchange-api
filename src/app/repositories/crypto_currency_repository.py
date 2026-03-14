@@ -77,15 +77,9 @@ class BaseCryptoCurrencyRepository(Repository):
     async def search_crypto_currency_by_name(self, name: str):
         result = await self.session.execute(
             select(self.model)
-            .filter(self.model.name.ilike(f"%{name}%"))
+            .where(self.model.name.ilike(f"%{name}%"))
         )
         return result.scalar_one_or_none()
     
-    async def search_crypto_currency_by_symbol(self, symbol: str):
-        result = await self.session.execute(
-            select(self.model)
-            .filter(self.model.symbol.ilike(f"%{symbol}%"))
-        )
-        return result.scalar_one_or_none()
-
+    
 

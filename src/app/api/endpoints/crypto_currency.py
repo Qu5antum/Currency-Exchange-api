@@ -13,13 +13,13 @@ crypto_router = APIRouter(
     tags=["crypto"]
 )
 
-@crypto_router.get("/api_call", response_model=list[CryptoCurrencyAPIOut], dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+@crypto_router.get("/api_call", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_crpyto_listing(
     cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service)
 ):
     return await cmc_api_service.get_crypto_listing()
 
-@crypto_router.get("/api_call/{crypto_currency_id}", response_model=CryptoCurrencyAPIOut, dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+@crypto_router.get("/api_call/{crypto_currency_id}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_crypto_by_id(
     crypto_currency_id: int,
     cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
@@ -73,7 +73,7 @@ async def get_top_gainers(
     return await crypto_currency_service.get_top_gainers(limit=limit)
 
 @crypto_router.get("/top_losers/{limit}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
-async def get_top_gainers(
+async def get_top_losers(
     limit: int = 10,
     cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)
@@ -90,14 +90,6 @@ async def search_crypto_currency_by_name(
     crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.search_crypto_currency_by_name(name=name)
 
-@crypto_router.get("/search/{symbol}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
-async def search_crypto_currency_by_symbol(
-    symbol: str,
-    cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
-    session: AsyncSession = Depends(get_session)
-):
-    crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
-    return await crypto_currency_service.search_crypto_currency_by_symbol(symbol=symbol)
 
 @crypto_router.post("/", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
 async def update_market_snapshots(

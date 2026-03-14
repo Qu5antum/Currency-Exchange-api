@@ -24,6 +24,8 @@ class User(Base):
         back_populates="users"
     )
 
+    portfolios: Mapped[list["Portfolio"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
 class Role(Base):
     __tablename__ = "roles"
 
@@ -57,6 +59,8 @@ class CryptoCurrency(Base):
     cmc_rank: Mapped[int] = mapped_column(Integer)
 
     snapshots: Mapped[list["MarketSnapshot"]] = relationship(back_populates="crypto_currency", cascade="all, delete-orphan")
+    portfolio_assets: Mapped[list["PortfolioAsset"]] = relationship(back_populates="crypto_currency")
+    portfolio_transactions: Mapped[list["PortfolioTransaction"]] = relationship(back_populates="crypto_currency")
 
 
 class MarketSnapshot(Base):
@@ -80,6 +84,55 @@ class MarketSnapshot(Base):
     crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="snapshots")
 
 
+class Portfolio(Base):
+    __tablename__ = "portfolios"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )
+
+    user: Mapped["User"] = relationship(back_populates="portfolios")
+    assets: Mapped[list["PortfolioAsset"]] = relationship(back_populates="portfolio",cascade="all, delete-orphan")
+    transactions: Mapped[list["PortfolioTransaction"]] = relationship(back_populates="portfolio",cascade="all, delete-orphan")
+
+class PortfolioAsset(Base):
+    __tablename__ = "portfolio_assets"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    amount: Mapped[float] = mapped_column(Float)
+    avg_buy_price: Mapped[float] = mapped_column(Float)
+
+    portfolio_id: Mapped[int] = mapped_column(Integer, ForeignKey("portfolios.id"), index=True, nullable=False)
+    crypto_currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("crypto_currencies.id"), index=True, nullable=False)
+    portfolio: Mapped["Portfolio"] = relationship(back_populates="assets")
+    crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="portfolio_assets")
+
+
+class PortfolioTransaction(Base):
+    __tablename__ = "portfolio_transactions"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    type: Mapped[str] = mapped_column(String)
+    amount: Mapped[float] = mapped_column(Float)
+    price: Mapped[float] = mapped_column(Float)
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), 
+        default=lambda: datetime.datetime.now(datetime.UTC), 
+        index=True
+    )
+
+    portfolio_id: Mapped[int] = mapped_column(Integer, ForeignKey("portfolios.id"), index=True, nullable=False)
+    crypto_currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("crypto_currencies.id"), index=True, nullable=False)
+    portfolio: Mapped["Portfolio"] = relationship(back_populates="transactions")
+    crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="portfolio_transactions")
+
+    
+    
 
 
 

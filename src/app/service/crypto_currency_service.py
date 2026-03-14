@@ -91,18 +91,7 @@ class CryptoCurrencyService:
         crypto_currency = await self.crypto_currency_repo.search_crypto_currency_by_name(name=name)
 
         if not crypto_currency:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Crypto currency by this name not found."
-            )
+            return None
+
         return crypto_currency
     
-    async def search_crypto_currency_by_symbol(self, symbol: str):
-        crypto_currency = await self.crypto_currency_repo.search_crypto_currency_by_symbol(symbol=symbol)
-
-        if not crypto_currency:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Crypto currency by this name not found."
-            )
-        return crypto_currency
