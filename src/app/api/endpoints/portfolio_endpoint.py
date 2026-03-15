@@ -50,3 +50,12 @@ async def portfolio_overview(
 ):
     portfolio_service = PortfolioService(session=session)
     return await portfolio_service.portfolio_overview(portfolio_id=portfolio_id, user=user)
+
+@portfolio_route.get("/{portfolio_id}/distribution", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def portfolio_distribution(
+    portfolio_id: int,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    portfolio_service = PortfolioService(session=session)
+    return await portfolio_service.portfolio_distribution(portfolio_id=portfolio_id, user=user)

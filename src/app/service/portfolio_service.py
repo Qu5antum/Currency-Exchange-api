@@ -180,6 +180,47 @@ class PortfolioService:
             "total_profit": total_profit,
             "assets": result_assets
         }
+    
+    async def portfolio_distribution(self, portfolio_id: int, user: User):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
+
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
+        
+        assets = await self.portfolio_repo.get_asset_by_portfolio_id(portfolio_id=portfolio_id)
+
+        crypto_currency_ids = [asset.crypto_currency_id for asset in assets]
+        snapshots = await self.market_repo.get_latest_snapshots(currency_ids=crypto_currency_ids)
+
+        values = []
+        for asset in assets:
+            snapshot = snapshots.get(asset.crypto_currency_id)
+            if not snapshot:
+                continue
+
+            value = asset.amount * snapshot.price
+            values.append((asset, value))
+
+        total_value = sum(v for _, v in values)
+        if total_value == 0:
+            return []
+        
+        distribution = []
+        for asset, value in values:
+            percent = round(value / total_value * 100, 2)
+            distribution.append({
+                "symbol": asset.crypto_currency.symbol,
+                "distribution": percent
+            })
+        return distribution
+
+
+
+
+
             
             
 

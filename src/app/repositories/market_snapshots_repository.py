@@ -17,10 +17,7 @@ class BaseMarketSnapshotRepository(Repository):
             .order_by(MarketSnapshot.currency_id, MarketSnapshot.timestamp.desc())
         )
         result = await self.session.execute(stmt)
-        snapshots = {}
-        for snapshot in result.scalars().all():
-            if snapshot.currency_id not in snapshots:
-                snapshots[snapshot.currency_id] = snapshot
+        snapshots = {s.currency_id: s for s in result.scalars().all()}
         return snapshots
 
 
