@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.app.database.db import AsyncSession
-from src.app.database.models import User
+from src.app.database.models import User, Portfolio
 from src.app.api.schemas.user import UserCreate, UserOut
 
 class AbstractUserRepository(ABC):

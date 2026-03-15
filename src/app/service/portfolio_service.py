@@ -31,7 +31,15 @@ class PortfolioService:
             "detail": new_portfolio
         }
     
-    async def buy_crypto(self, portfolio_id: int, data: BuyCryptoRequest):
+    async def buy_crypto(self, portfolio_id: int, data: BuyCryptoRequest, user: User):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
+
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
+
         crypto_currency = await self.crypto_repo.get_by_symbol(symbol=data.symbol)
         
         if not crypto_currency:
@@ -74,7 +82,14 @@ class PortfolioService:
             "asset": asset
         }
     
-    async def sell_crypto(self, portfolio_id, data: SellCryptoRequest):
+    async def sell_crypto(self, portfolio_id: int, data: SellCryptoRequest, user: User):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
+
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
         crypto_currency = await self.crypto_repo.get_by_symbol(symbol=data.symbol)
 
         if not crypto_currency:
@@ -118,7 +133,15 @@ class PortfolioService:
             "message": "Crypto sold."
         }
     
-    async def portfolio_overview(self, portfolio_id: int):
+    async def portfolio_overview(self, portfolio_id: int, user: User):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
+
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
+        
         assets = await self.portfolio_repo.get_asset_by_portfolio_id(portfolio_id=portfolio_id)
 
         result_assets = []

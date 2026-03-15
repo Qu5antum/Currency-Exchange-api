@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
+import uuid
 
 from src.app.database.models import Portfolio, PortfolioAsset, PortfolioTransaction
 from .base_repository import Repository
@@ -27,6 +28,13 @@ class PortfolioRepostory(Repository):
 
         return result.scalars().all()
     
-#Написать проверку является ли id portfolio того пользователя 
-
+    async def get_user_portfolio(self, user_id: uuid.UUID, portfolio_id: int):
+        result = await self.session.execute(
+            select(Portfolio)
+            .where(
+                Portfolio.id == portfolio_id,
+                Portfolio.user_id == user_id
+            )
+        )
+        return result.scalar_one_or_none()
 

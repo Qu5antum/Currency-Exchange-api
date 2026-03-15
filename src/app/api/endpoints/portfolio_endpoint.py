@@ -26,24 +26,27 @@ async def create_portfolio(
 async def buy_crypto(
     portfolio_id: int,
     data: BuyCryptoRequest,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     portfolio_service = PortfolioService(session=session)
-    return await portfolio_service.buy_crypto(portfolio_id=portfolio_id, data=data)
+    return await portfolio_service.buy_crypto(portfolio_id=portfolio_id, data=data, user=user)
 
 @portfolio_route.post("/{portfolio_id}/sell", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
 async def sell_crypto(
     portfolio_id: int,
     data: SellCryptoRequest,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     portfolio_service = PortfolioService(session=session)
-    return await portfolio_service.sell_crypto(portfolio_id=portfolio_id, data=data)
+    return await portfolio_service.sell_crypto(portfolio_id=portfolio_id, data=data, user=user)
 
 @portfolio_route.get("/{portfolio_id}/overview", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def portfolio_overview(
     portfolio_id: int,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     portfolio_service = PortfolioService(session=session)
-    return await portfolio_service.portfolio_overview(portfolio_id=portfolio_id)
+    return await portfolio_service.portfolio_overview(portfolio_id=portfolio_id, user=user)
