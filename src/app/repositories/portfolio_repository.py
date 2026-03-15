@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from src.app.database.models import Portfolio, PortfolioAsset, PortfolioTransaction
 from .base_repository import Repository
@@ -21,8 +22,11 @@ class PortfolioRepostory(Repository):
         result = await self.session.execute(
             select(PortfolioAsset)
             .where(PortfolioAsset.portfolio_id == portfolio_id)
+            .options(selectinload(PortfolioAsset.crypto_currency))
         )
 
-        return result.scalar_one_or_none()
+        return result.scalars().all()
+    
+#Написать проверку является ли id portfolio того пользователя 
 
 

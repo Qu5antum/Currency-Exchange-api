@@ -9,14 +9,19 @@ from src.app.database.models import MarketSnapshot
 class BaseMarketSnapshotRepository(Repository):
     model = MarketSnapshot
 
-    async def get_latest_snapshot(self, crypto_currency_id: int):
-        result = await self.session.execute(
-            select(MarketSnapshot.price)
-            .where(MarketSnapshot.currency_id == crypto_currency_id)
-            .order_by(MarketSnapshot.timestamp.desc())
-            .limit(1)
+    async def get_latest_snapshots(self, currency_ids: list[int]):
+        stmt = (
+            select(MarketSnapshot)
+            .where(MarketSnapshot.currency_id.in_(currency_ids))
+            .distinct(MarketSnapshot.currency_id)
+            .order_by(MarketSnapshot.currency_id, MarketSnapshot.timestamp.desc())
         )
-        return result.scalar_one_or_none()
+        result = await self.session.execute(stmt)
+        snapshots = {}
+        for snapshot in result.scalars().all():
+            if snapshot.currency_id not in snapshots:
+                snapshots[snapshot.currency_id] = snapshot
+        return snapshots
 
 
 

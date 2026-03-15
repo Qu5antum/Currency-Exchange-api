@@ -117,7 +117,46 @@ class PortfolioService:
         return {
             "message": "Crypto sold."
         }
-        
+    
+    async def portfolio_overview(self, portfolio_id: int):
+        assets = await self.portfolio_repo.get_asset_by_portfolio_id(portfolio_id=portfolio_id)
+
+        result_assets = []
+
+        total_value = 0
+        total_profit = 0
+
+        currency_ids = [asset.crypto_currency_id for asset in assets]
+        snapshots = await self.market_repo.get_latest_snapshots(currency_ids=currency_ids)
+
+        for asset in assets:
+            snapshot = snapshots.get(asset.crypto_currency_id)
+            
+            if not snapshot:
+                continue
+
+            current_price = snapshot.price
+
+            value = asset.amount * current_price
+            profit = (current_price - asset.avg_buy_price) * asset.amount
+
+            total_value += value
+            total_profit += profit
+
+            result_assets.append({
+                "symbol": asset.crypto_currency.symbol,
+                "amount": asset.amount,
+                "avg_buy_price": asset.avg_buy_price,
+                "current_price": current_price,
+                "value": value,
+                "profit": profit
+            })
+
+        return {
+            "total_value": total_value,
+            "total_profit": total_profit,
+            "assets": result_assets
+        }
             
             
 
