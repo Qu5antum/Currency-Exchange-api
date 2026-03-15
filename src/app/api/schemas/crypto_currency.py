@@ -52,8 +52,14 @@ class CryptoCurrencyAPIOut(CryptoCurrencyBase):
 
 class BuyCryptoRequest(BaseModel):
     symbol: str
-    amount: float
-    price: float
+    amount: float = Field(..., gt=0)
+    price: float = Field(..., gt=0)
+
+
+class SellCryptoRequest(BaseModel):
+    symbol: str
+    amount: float = Field(..., gt=0)
+    price: float = Field(..., gt=0)
 
 
 

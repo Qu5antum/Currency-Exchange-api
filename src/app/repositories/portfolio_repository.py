@@ -16,11 +16,13 @@ class PortfolioRepostory(Repository):
             )
         )
         return result.scalar_one_or_none()
+    
+    async def get_asset_by_portfolio_id(self, portfolio_id: int):
+        result = await self.session.execute(
+            select(PortfolioAsset)
+            .where(PortfolioAsset.portfolio_id == portfolio_id)
+        )
+
+        return result.scalar_one_or_none()
 
 
-class PortfolioAsset(Repository):
-    model = PortfolioAsset
-
-
-class PortfolioTransaction(Repository):
-    model = PortfolioTransaction
