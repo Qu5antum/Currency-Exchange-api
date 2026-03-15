@@ -7,6 +7,7 @@ from src.app.database.db import init_models
 from src.app.core.config import settings
 from src.app.api.endpoints.user_endpoint import user_router
 from src.app.api.endpoints.crypto_currency import crypto_router
+from src.app.api.endpoints.portfolio_endpoint import portfolio_route
 from src.app.scheduler.market_scheduler import start_scheduler
 
 @asynccontextmanager
@@ -44,6 +45,7 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(crypto_router)
+app.include_router(portfolio_route)
 
 
 if __name__ == "__main__":

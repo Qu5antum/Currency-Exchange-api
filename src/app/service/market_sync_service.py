@@ -40,7 +40,6 @@ class MarketSyncService:
                 market_cap=quote["market_cap"],
                 market_cap_dominance=quote["market_cap_dominance"],
                 fully_diluted_market_cap=quote["fully_diluted_market_cap"],
-                timestamp=datetime.now(timezone.utc),
                 currency_id=exisnting_currency.id
             )
 

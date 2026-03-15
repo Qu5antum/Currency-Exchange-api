@@ -22,7 +22,7 @@ class PortfolioService:
             user_id=user.id
         )
 
-        await self.portfolio_repo.create(data=new_portfolio)
+        await self.portfolio_repo.create(model=new_portfolio)
         await self.session.commit()
         await self.session.refresh(new_portfolio)
 
@@ -53,6 +53,7 @@ class PortfolioService:
                 portfolio_id=portfolio_id,
                 crypto_currency_id=crypto_currency.id,
                 amount=data.amount,
+                avg_buy_price=data.price
             )
             self.session.add(asset)
 
@@ -98,7 +99,7 @@ class PortfolioService:
         
         asset.amount -= data.amount
 
-        if asset.amout == 0:
+        if asset.amount == 0:
             await self.session.delete(asset)
 
         transaction = PortfolioTransaction(

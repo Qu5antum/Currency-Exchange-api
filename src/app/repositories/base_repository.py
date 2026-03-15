@@ -33,10 +33,9 @@ class Repository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session 
 
-    async def create(self, data: dict):
-        model_name = self.model(**data)
-        self.session.add(model_name)
-        return model_name
+    async def create(self, model):
+        self.session.add(model)
+        return model
 
     async def find_all(self):
         result = await self.session.execute(select(self.model))
