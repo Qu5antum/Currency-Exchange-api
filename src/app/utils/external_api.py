@@ -22,9 +22,9 @@ class CMCServiceApi:
         return result["data"]
     
     async def get_crypto_by_id(self, crypto_currency_id: int):
-        responce = await self.client.get("/v2/cryptocurrency/quotes/latest", params={"id": crypto_currency_id})
-        responce.raise_for_status()
-        result = responce.json()
+        response = await self.client.get("/v2/cryptocurrency/quotes/latest", params={"id": crypto_currency_id})
+        response.raise_for_status()
+        result = response.json()
 
         if result["status"]["error_code"] != 0:
             raise RuntimeError(result["status"]["error_message"])

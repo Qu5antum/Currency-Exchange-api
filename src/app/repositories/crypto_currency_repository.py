@@ -25,6 +25,13 @@ class BaseCryptoCurrencyRepository(Repository):
 
         return crypto_currencies_with_snapshots
     
+    async def get_by_symbol(self, symbol: str):
+        result = await self.session.execute(
+            select(CryptoCurrency)
+            .where(CryptoCurrency.symbol == symbol)
+        )
+        return result.scalar_one_or_none()
+    
     async def find_with_symbol(self, symbol: str, days: int | None = None) -> None:
         result = await self.session.execute(
             select(self.model)

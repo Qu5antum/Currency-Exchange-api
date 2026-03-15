@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, ForeignKey, Table, Float, DateTime, BigInteger
+from sqlalchemy import String, Integer, Column, ForeignKey, Table, Float, DateTime, BigInteger, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
@@ -89,7 +89,7 @@ class Portfolio(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), index=True, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), 
         default=lambda: datetime.datetime.now(datetime.UTC), 
@@ -130,6 +130,10 @@ class PortfolioTransaction(Base):
     crypto_currency_id: Mapped[int] = mapped_column(Integer, ForeignKey("crypto_currencies.id"), index=True, nullable=False)
     portfolio: Mapped["Portfolio"] = relationship(back_populates="transactions")
     crypto_currency: Mapped["CryptoCurrency"] = relationship(back_populates="portfolio_transactions")
+
+__table_args__ = (
+    UniqueConstraint("portfolio_id", "crypto_currency_id"),
+)
 
     
     

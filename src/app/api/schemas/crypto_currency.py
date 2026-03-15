@@ -50,5 +50,11 @@ class CryptoCurrencyAPIOut(CryptoCurrencyBase):
     quote: Quote
 
 
+class BuyCryptoRequest(BaseModel):
+    symbol: str
+    amount: float
+    price: float
+
+
 
 

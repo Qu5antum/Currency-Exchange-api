@@ -17,6 +17,7 @@ async def lifespan(app: FastAPI):
             "X-CMC_PRO_API_KEY": settings.CMC_API_KEY
         },
         timeout=10.0,
+        trust_env=False,
     )
 
     start_scheduler()
