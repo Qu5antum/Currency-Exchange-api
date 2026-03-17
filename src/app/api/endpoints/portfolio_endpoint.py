@@ -6,6 +6,7 @@ from src.app.api.dependencies.dependency import get_current_user
 from src.app.api.dependencies.check_role import require_roles
 from src.app.service.portfolio_service import PortfolioService
 from src.app.api.schemas.crypto_currency import BuyCryptoRequest, SellCryptoRequest
+from src.app.api.schemas.portfolio import TransactionRequest, TransactionType
 
 
 portfolio_route = APIRouter(
@@ -69,3 +70,14 @@ async def portfolio_histroy(
 ):
     portfolio_service = PortfolioService(session=session)
     return await portfolio_service.portfolio_history(days=days, portfolio_id=portfolio_id, user=user)
+
+@portfolio_route.get("{portfolio_id}/transactions", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def transactions(
+    portfolio_id: int,
+    data: TransactionRequest = Depends(),
+    transaction_type: TransactionType | None = None,
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    portfolio_service = PortfolioService(session=session)
+    return await portfolio_service.get_transactions(portfolio_id=portfolio_id, data=data, transaction_type=transaction_type, user=user)

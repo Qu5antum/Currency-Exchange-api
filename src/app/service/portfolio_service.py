@@ -7,6 +7,7 @@ from src.app.repositories.portfolio_repository import PortfolioRepostory
 from src.app.repositories.crypto_currency_repository import BaseCryptoCurrencyRepository
 from src.app.repositories.market_snapshots_repository import BaseMarketSnapshotRepository
 from src.app.api.schemas.crypto_currency import BuyCryptoRequest, SellCryptoRequest
+from src.app.api.schemas.portfolio import TransactionType, TransactionRequest
 
 
 class PortfolioService:
@@ -260,4 +261,24 @@ class PortfolioService:
             })
 
         return history
+    
+    async def get_transactions(
+            self, 
+            portfolio_id: int, 
+            user: User,
+            data: TransactionRequest, 
+            transaction_type: TransactionType | None = None,
+    ):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
+
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
+        
+        transactions = await self.portfolio_repo.get_transactions(portfolio_id=portfolio_id, data=data, transaction_type=transaction_type)
+
+        return transactions
+        
 
