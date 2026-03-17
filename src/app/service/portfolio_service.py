@@ -215,16 +215,49 @@ class PortfolioService:
                 "symbol": asset.crypto_currency.symbol,
                 "distribution": percent
             })
+
         return distribution
 
+    async def portfolio_history(self, days: int, portfolio_id: int, user: User):
+        user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
 
+        if not user_portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Porfolio not found."
+            )
+        
+        assets = await self.portfolio_repo.get_asset_by_portfolio_id(portfolio_id=portfolio_id)
 
+        if not assets:
+            return []
 
+        crypto_currency_ids = [asset.crypto_currency_id for asset in assets]
+        snapshots = await self.market_repo.get_historical_snapshots(days=days, currency_ids=crypto_currency_ids)
 
-            
-            
+        grouped_snapshots = {}
 
-    
+        for snapshot in snapshots:
+            ts = snapshot.timestamp
+            if ts not in grouped_snapshots:
+                grouped_snapshots[ts] = {}
+            grouped_snapshots[ts][snapshot.currency_id] = snapshot
+        
+        history = []
 
+        for timestamp in sorted(grouped_snapshots.keys()):
+            currency_snapshots = grouped_snapshots[ts]
+            portfolio_value = 0
 
+            for asset in assets:
+                snapshot = currency_snapshots.get(asset.crypto_currency_id)
+                if snapshot:
+                    portfolio_value += asset.amount * snapshot.price
+
+            history.append({
+                "timesamp: ": timestamp,
+                "value: ": portfolio_value
+            })
+
+        return history
 
