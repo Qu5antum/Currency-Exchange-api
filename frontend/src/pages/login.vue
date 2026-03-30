@@ -2,8 +2,8 @@
   <div class="auth-page">
     <h1>Login</h1>
     <form @submit.prevent="loginUser">
-      <label>Email:</label>
-      <input type="email" v-model="email" required />
+      <label>Username:</label>
+      <input type="text" v-model="username" required />
 
       <label>Password:</label>
       <input type="password" v-model="password" required />
@@ -23,17 +23,23 @@
 <script setup>
 import { ref } from "vue";
 
-const email = ref("");
+const username = ref(""); 
 const password = ref("");
 const error = ref("");
 
 async function loginUser() {
   error.value = "";
   try {
-    const res = await fetch("http://localhost:8000/api/user/login", {
+    const formData = new URLSearchParams();
+    formData.append("username", username.value);
+    formData.append("password", password.value);
+
+    const res = await fetch("http://127.0.0.1:8000/api/user/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.value, password: password.value })
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData
     });
 
     const data = await res.json();
@@ -42,11 +48,8 @@ async function loginUser() {
       throw new Error(data.detail || "Login failed");
     }
 
-    // Сохраняем токен в localStorage
     localStorage.setItem("token", data.access_token);
-
-    // Переходим на главную страницу или дашборд
-    window.location.href = "/";
+    window.location.href = "/crypto";
   } catch (err) {
     error.value = err.message;
   }

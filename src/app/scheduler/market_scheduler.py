@@ -25,7 +25,7 @@ def start_scheduler():
     scheduler.add_job(
         sync_market,
         "interval",
-        minutes=10,
+        minutes=60,
         coalesce=True,
         max_instances=1
     )
