@@ -14,8 +14,6 @@ const routes = [
   { path: "/crypto", component: CryptoList },
   { path: "/crypto/search", component: CryptoSearch },
   { path: "/crypto/:symbol", component: CryptoDetail, props: true }
-
-
 ];
 
 const router = createRouter({

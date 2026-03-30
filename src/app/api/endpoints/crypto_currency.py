@@ -53,9 +53,9 @@ async def get_crypto_currencies(
     crypto_currency_service = CryptoCurrencyService(session=session, cmc_api_service=cmc_api_service)
     return await crypto_currency_service.get_all_crypto_currencies(symbol=symbol)   
 
-@crypto_router.get("/{symbol}/history/{period}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+@crypto_router.get("/{symbol}/history/{days}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
 async def get_currency_history(
-    days: int,
+    days: str,
     symbol: str,
     cmc_api_service: CMCServiceApi = Depends(get_cmc_api_service),
     session: AsyncSession = Depends(get_session)

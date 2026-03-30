@@ -52,7 +52,7 @@ class CryptoCurrencyService:
 
         return {"detail": f"Crypto currencies added: {len(new_currencies)}"}
 
-    async def get_all_crypto_currencies(self, symbol: str | None = None, days: int | None = None):
+    async def get_all_crypto_currencies(self, symbol: str | None = None, days: str | None = None):
         if not symbol:
             crypto_currencies = await self.crypto_currency_repo.find_all_with_relation()
             return crypto_currencies
@@ -68,7 +68,7 @@ class CryptoCurrencyService:
                 
                 return crypto_currencies
             else:
-                market_snapshots = await self.crypto_currency_repo.find_with_symbol(symbol=symbol, days=days)
+                market_snapshots = await self.crypto_currency_repo.find_with_symbol(symbol=symbol, days=int(days))
 
                 if not market_snapshots:
                     raise HTTPException(
