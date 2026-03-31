@@ -40,6 +40,15 @@ class PortfolioRepostory(Repository):
         )
         return result.scalar_one_or_none()
     
+    async def get_user_portfolios(self, user_id: uuid.UUID):
+        result = await self.session.execute(
+            select(self.model)
+            .where(self.model.user_id == user_id)
+            .options(selectinload(self.model.assets))
+        )
+
+        return result.scalars().all()
+    
     async def get_transactions(
             self, 
             portfolio_id: int, 

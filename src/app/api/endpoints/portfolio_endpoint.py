@@ -23,6 +23,14 @@ async def create_portfolio(
     portfolio_service = PortfolioService(session=session)
     return await portfolio_service.add_portfolio_for_user(name=name, user=user)
 
+@portfolio_route.get("/user/{user_id}", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_200_OK)
+async def get_user_portfolios(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    portfolio_service = PortfolioService(session=session)
+    return await portfolio_service.get_user_portfolios(user=user)   
+
 @portfolio_route.post("/{portfolio_id}/buy", dependencies=[Depends(require_roles(["USER", "ADMIN"]))], status_code=status.HTTP_201_CREATED)
 async def buy_crypto(
     portfolio_id: int,

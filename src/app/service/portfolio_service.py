@@ -31,6 +31,12 @@ class PortfolioService:
             "message": "New Portfolio created.",
             "detail": new_portfolio
         }
+
+
+    async def get_user_portfolios(self, user: User):
+        user_portfolios = await self.portfolio_repo.get_user_portfolios(user_id=user.id)
+
+        return user_portfolios
     
     async def buy_crypto(self, portfolio_id: int, data: BuyCryptoRequest, user: User):
         user_portfolio = await self.portfolio_repo.get_user_portfolio(user_id=user.id, portfolio_id=portfolio_id)
