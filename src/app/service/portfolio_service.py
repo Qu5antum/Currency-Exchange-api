@@ -253,7 +253,7 @@ class PortfolioService:
         history = []
 
         for timestamp in sorted(grouped_snapshots.keys()):
-            currency_snapshots = grouped_snapshots[ts]
+            currency_snapshots = grouped_snapshots[timestamp]
             portfolio_value = 0
 
             for asset in assets:
@@ -262,8 +262,8 @@ class PortfolioService:
                     portfolio_value += asset.amount * snapshot.price
 
             history.append({
-                "timestamp: ": timestamp,
-                "value: ": portfolio_value
+                "timestamp": timestamp,
+                "value": portfolio_value
             })
 
         return history

@@ -36,9 +36,9 @@ function render() {
   chart = new Chart(canvas.value, {
     type: 'line',
     data: {
-      labels:   props.data.map(i => formatLabel(i['timestamp: '])),
+      labels:   props.data.map(i => formatLabel(i.timestamp)),
       datasets: [{
-        data:                      props.data.map(i => i['value: ']),
+        data:                      props.data.map(i => i.value),
         borderColor:               color,
         borderWidth:               1.5,
         backgroundColor:           gradient,
