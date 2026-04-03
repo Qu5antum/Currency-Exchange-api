@@ -262,7 +262,7 @@ class PortfolioService:
                     portfolio_value += asset.amount * snapshot.price
 
             history.append({
-                "timesamp: ": timestamp,
+                "timestamp: ": timestamp,
                 "value: ": portfolio_value
             })
 

@@ -6,7 +6,7 @@ import CryptoList    from "../pages/crypto_list.vue";
 import CryptoDetail  from "../pages/crypto_detail.vue";
 import CryptoSearch  from "../pages/crypto_search.vue";
 import PortfolioList     from "../pages/portfolio_list.vue";
-import PortfolioDetail   from "../pages/portfolio_detail.vue";
+import PortfolioDetail   from "../components/portfolio_detail.vue";
 import Transactions      from "../pages/transactions.vue";
 
 const routes = [
@@ -53,13 +53,6 @@ router.beforeEach((to, from, next) => {
     next({ name: "Login", query: { redirect: to.fullPath } });
     return;
   }
-
-  // Если уже залогинен — не пускаем обратно на login/register
-  if ((to.name === "Login" || to.name === "Register") && token) {
-    next({ name: "PortfolioList" });
-    return;
-  }
-
   next();
 });
 
